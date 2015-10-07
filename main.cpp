@@ -5,6 +5,7 @@ using namespace std;
 
 Point2f point;
 vector<Point2f> points[2];
+bool addRemovePt;
 
 int main(int argc, char *argv[])
 {

@@ -15,7 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->leftImgLabel->setAlignment(Qt::AlignCenter);
     ui->rightImgLabel->setAlignment(Qt::AlignCenter);
 
-    stereoAnalysis = new CStereoAnalysis;
+    widget= new PGLWidget(ui->widget);
+
+
+    //widget->resize(ui->widget->size());
+
+    // widget->show();
+
+    // stereoAnalysis = new CStereoAnalysis;
 
     // opened video initalization
     currentFrame = -1;
@@ -36,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->arch, SIGNAL(editingFinished()),this, SLOT(parametersEditFinished()));
     connect(ui->fov, SIGNAL(editingFinished()),this, SLOT(parametersEditFinished()));
     connect(ui->translation, SIGNAL(editingFinished()),this, SLOT(parametersEditFinished()));
+
 }
 
 MainWindow::~MainWindow()
@@ -117,23 +125,23 @@ void MainWindow::splitVideo()                  // split video to frames and show
 
     ui->progressBar->setValue(currentFrame);  // set current pragress
 
-    Mat frame;
-    capture >> frame;
+    //Mat frame;
+    capture >> mLeftImg;
 
-    if (frame.empty())
+    if (mLeftImg.empty())
         return;
 
-    leftImg = MatToQimage(frame);                // convert Mat to QImage for displaying
+    QImage qLeftImg = MatToQimage(mLeftImg);                // convert Mat to QImage for displaying
 
     int height = ui->leftImgLabel->height();
     int width = ui->leftImgLabel->width();
 
     qDebug() <<height << " " << width;          // for debugging
 
-    leftImg = leftImg.scaled(width, height, Qt::KeepAspectRatio);    // resize the image to adopt the label
+    qLeftImg = qLeftImg.scaled(width, height, Qt::KeepAspectRatio);    // resize the image to adopt the label
 
-    ui->leftImgLabel->setPixmap(QPixmap::fromImage(leftImg));
-    ui->rightImgLabel->setPixmap(QPixmap::fromImage(leftImg));
+    ui->leftImgLabel->setPixmap(QPixmap::fromImage(qLeftImg));
+    ui->rightImgLabel->setPixmap(QPixmap::fromImage(qLeftImg));
 }
 
 
@@ -145,6 +153,12 @@ void MainWindow::setParameters(double dbBaseline, double dbDolly,
     ui->arch->setText(QString::number(dbArch, 'g', 4));
     ui->fov->setText(QString::number(dbFov, 'g', 4));
     ui->translation->setText(QString::number(dbTranslation, 'g', 4));
+}
+
+
+void MainWindow::drawPrinciple()
+{
+
 }
 
 
@@ -178,4 +192,22 @@ QImage MainWindow::MatToQimage(Mat &mat)
         qDebug() << "ERROR: Mat could not be converted to QImage.";
         return QImage();
     }
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if (event->size() == event->oldSize())
+        return;
+
+
+    QImage qLeftImg = MatToQimage(mLeftImg);                // convert Mat to QImage for displaying
+    int height = ui->leftImgLabel->height();
+    int width = ui->leftImgLabel->width();
+
+    qLeftImg = qLeftImg.scaled(width, height, Qt::KeepAspectRatio);    // resize the image to adopt the label
+    ui->leftImgLabel->setPixmap(QPixmap::fromImage(qLeftImg));
+    ui->rightImgLabel->setPixmap(QPixmap::fromImage(qLeftImg));
+
+    widget->reshow(ui->openGLWidget->width(), ui->openGLWidget->height());  //
 }

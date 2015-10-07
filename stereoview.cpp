@@ -3,6 +3,7 @@
 
 extern Point2f point;
 extern vector<Point2f> points[2];
+extern bool addRemovePt;
 
 using namespace cv;
 using namespace std;
@@ -19,7 +20,7 @@ CStereoView::CStereoView(Mat &_mLeftImg, Mat &_mRightImg)
 }
 
 
-CStereoView::getRBImg()
+void CStereoView::getRBImg()
 {
     Mat mRedChannel;
     Mat mBlueChannel;
@@ -42,7 +43,7 @@ CStereoView::getRBImg()
 
 // tracking objects with optical flow methods
 // completed by Xiaohan Jin on 2015-9-22
-CStereoView::trackflow(Mat gray, Mat prevGray)
+void CStereoView::trackflow(Mat gray, Mat prevGray)
 {
     TermCriteria termcrit(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03);
     Size subPixWinSize(5, 5), winSize(10, 10);

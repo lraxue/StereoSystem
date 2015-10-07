@@ -51,7 +51,11 @@ LIBS += -Ld:\opencv\build\x64\vc12\lib \
     -lopencv_ml2410
 }
 
+LIBS +=  -lglut32
+LIBS += -LC:\glut
+
 QT       += core gui
+QT       += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -62,11 +66,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     stereoview.cpp \
-    stereoanalysis.cpp
+    stereoanalysis.cpp \
+    pglwidget.cpp
 
 HEADERS  += mainwindow.h \
     stereoview.h \
-    stereoanalysis.h
+    stereoanalysis.h \
+    pglwidget.h
 
 FORMS    += mainwindow.ui
 

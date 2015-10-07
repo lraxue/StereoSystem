@@ -5,9 +5,6 @@
 #include "opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include "stereoview.h"
-#include "stereoanalysis.h"
-
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QDebug>
@@ -15,15 +12,19 @@
 #include <QDoubleSpinBox>
 #include <QFile>
 
-using namespace cv;
+#include "pglwidget.h"
+#include "stereoview.h"
+#include "stereoanalysis.h"
 
 namespace Ui {
 class MainWindow;
+
 class CStereoView;
 class CStereoAnalysis;
+class PGLWidget;
+
 }
-
-
+//using namespace cv;
 
 class MainWindow : public QMainWindow
 {
@@ -38,9 +39,12 @@ private:
     void setParameters(double dbBaseline, double dbDolly,
                       double dbArch, double dbFov, double dbTranslation);
 
-
+    void drawPrinciple();
 
     QImage MatToQimage(Mat &mat);
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void openFile();
@@ -55,13 +59,18 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    PGLWidget *widget;
+
     CStereoAnalysis *stereoAnalysis;
 
     VideoCapture capture;
     QFile f;
     QString fileName;
-    QImage leftImg;
-    QImage rightImg;
+    cv::Mat mLeftImg;
+    cv::Mat mRightImg;
+
+    //QImage leftImg;
+    //QImage rightImg;
 
     QString baseline;
     QString dolly;
